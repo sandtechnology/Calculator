@@ -84,11 +84,11 @@ class gui extends JFrame {
         output.setSize(10, 10);
         output.addFocusListener(new FocusAdapter() {
                                     public void focusGained(FocusEvent e) {
-                                        setTitle("计算器V2.1 作者：sand（可使用键盘输入）");
+                                        setTitle("计算器V2.0 作者：sand（可使用键盘输入）");
                                     }
 
                                     public void focusLost(FocusEvent e) {
-                                        setTitle("计算器V2.1 作者：sand（点击文本区域以启用键盘输入）");
+                                        setTitle("计算器V2.0 作者：sand（点击文本区域以启用键盘输入）");
                                     }
                                 }
         );
