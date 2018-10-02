@@ -7,12 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 class gui extends JFrame {
-    private final String[] num = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ".", "退出"};
+    private final String[] num = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ".", "退出（Esc）"};
     private final String[] math_num = {"+", "-", "x", "÷", "="};
     private List<String> num_cache = new ArrayList<>();
     private List<String> math_num_cache = new ArrayList<>();
     private String ready_add_num = "";
     private Float result = (float) 0;
+    private String version = "V2.1";
+    private boolean need_to_clear, has_result = false;
 
     gui() {
         Container gui = getContentPane();
@@ -54,10 +56,6 @@ class gui extends JFrame {
                                 if ("x".equals(math_num[a]))
                                     button.doClick();
                                 break;
-                            case 'c' | 'C':
-                                if ("清除".equals(math_num[a]))
-                                    button.doClick();
-                                break;
                             default:
                                 switch (e.getKeyCode()) {
                                     case KeyEvent.VK_ENTER:
@@ -65,7 +63,7 @@ class gui extends JFrame {
                                             button.doClick();
                                         break;
                                     case KeyEvent.VK_ESCAPE:
-                                        if ("退出".equals(math_num[a]))
+                                        if ("退出（Esc）".equals(math_num[a]))
                                             button.doClick();
                                         break;
                                 }
@@ -76,19 +74,25 @@ class gui extends JFrame {
             button.addActionListener((ActionEvent) -> ButtonPerformer(output, "math", a));
             math_num_panel.add(button);
         }
-        JButton button = new JButton("清除");
+        JButton button = new JButton("清除（C）");
         button.addActionListener((ActionEvent) -> ButtonPerformer(output, "clear", 0));
+        output.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyChar() == 'c' | e.getKeyChar() == 'C')
+                    button.doClick();
+            }
+        });
         output.getAutoscrolls();
         output.setEditable(false);
         math_num_panel.add(button);
         output.setSize(10, 10);
         output.addFocusListener(new FocusAdapter() {
                                     public void focusGained(FocusEvent e) {
-                                        setTitle("计算器V2.0 作者：sand（可使用键盘输入）");
+                                        setTitle("计算器" + version + " 作者：sand（可使用键盘输入）");
                                     }
 
                                     public void focusLost(FocusEvent e) {
-                                        setTitle("计算器V2.0 作者：sand（点击文本区域以启用键盘输入）");
+                                        setTitle("计算器" + version + " 作者：sand（点击文本区域以启用键盘输入）");
                                     }
                                 }
         );
@@ -113,22 +117,29 @@ class gui extends JFrame {
     private void ButtonPerformer(JTextArea addTextArea, String type, int index) {
         switch (type) {
             case "math":
-                if (ready_add_num.length() > 0) {
+                if (has_result & !math_num[index].equals("=")) {
+                    math_num_cache.add(math_num[index]);
+                    addTextArea.append(math_num[index] + "\n");
+                    has_result = false;
+                } else if (ready_add_num.length() > 0) {
                     num_cache.add(ready_add_num);
                     ready_add_num = "";
-                }
-                addTextArea.append("\n" + math_num[index] + "\n");
-                if (math_num[index].equals("=")) {
-                    addTextArea.setText(Count() + "\n");
-                } else {
-                    math_num_cache.add(math_num[index]);
+                    if (need_to_clear) {
+                        addTextArea.setText(math_num[index]);
+                        need_to_clear = false;
+                    } else {
+                        addTextArea.append("\n" + math_num[index] + "\n");
+                    }
+                    if (math_num[index].equals("=")) {
+                        addTextArea.setText(Count() + "\n");
+                        has_result = true;
+                    } else {
+                        math_num_cache.add(math_num[index]);
+                    }
                 }
                 break;
             case "num":
                 switch (num[index]) {
-                    case "关于":
-                        addTextArea.setText("作者：sand" + "\n");
-                        break;
                     case "退出":
                         System.exit(0);
                         break;
@@ -140,12 +151,18 @@ class gui extends JFrame {
                         break;
                     default:
                         ready_add_num = ready_add_num + num[index];
-                        addTextArea.append(num[index]);
+                        if (need_to_clear) {
+                            addTextArea.setText(num[index]);
+                            need_to_clear = false;
+                        } else {
+                            addTextArea.append(num[index]);
+                        }
                         break;
                 }
                 break;
             case "clear":
-                addTextArea.removeAll();
+                addTextArea.setText("");
+                need_to_clear = true;
                 ready_add_num = "";
                 num_cache.clear();
                 math_num_cache.clear();
@@ -179,13 +196,12 @@ class gui extends JFrame {
                 result = StringConvert(num_cache.get(num_cache.toArray().length - 1));
             }
         } catch (Exception e) {
-            if (!e.toString().contains("Index"))
                 e.printStackTrace();
         }
         num_cache.clear();
         math_num_cache.clear();
         num_cache.add(0, result.toString());
         result = (float) 0;
-        return num_cache.get(0);
+        return num_cache.get(0).replace("Infinity", "Error:数字过大或无效");
     }
 }
