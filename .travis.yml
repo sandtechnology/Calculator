@@ -1,3 +1,10 @@
 language: java
 script:
 - ant all
+deploy:
+  provider: releases
+  api_key:
+    secure: FymHGd4HwJ4bhnXEycHU5CI+XGkCL1hK0IAYOaspjjzItDYCKeVyyAQLdgAkwdMGU3HJ+e/V41hGw6HSLH+bpq+xugGFG+jvmLkelTKdtZh3OuOVheziBXjTgQC+/KK20cFjHmJazbzay+yv7YoOuiXJkN5KFSBiJzouTHTKahSkFtUwLbqWbhYUiXqN2XVtKpRP5Fl05hAyr9lEE0eU38TvPYayJZyN0v4adzkYIyrNgZVZco8FNe+09k58NgftwIs+pNLRe4xB84EVjnnOaR43Pdb/vq48W9bu3mD3BJ9/R0JXCZJW7cSp01+CH9VRqy0D+UfDrg3PWbbyKFul/MrE5Zx7uWzx+OdHRm3bh3eI3nf14VbPkPUIGKKsaHyvk7r/pV6t/Mz46v+6QxJ1WwCg7to9vyXT0Zbk0rFL/Qs9L+wURmmq2MT6uNVJ+XZVIU81doOwEpLg/RT0j+CZY0i/6brSTz6AWAdgK+odbaRAfsJfgZthV8fQZRJ7Br8hKe67kGXgfImV9VSKv/BlV5bQG2vK2i17rxT2NPnmPyIzg8HkeeoGOHC6tPTeJpm8xLmHcjXspMi/ysPrd0cHBnvxPsyMkuDFWKxDo3bTa5Y2wpsrG7Nh4x118TtgT3RkBPPOV9b3L4dqvpMiNg4KuwyfjldRsP0a6R2yYYx6f0U=
+  file: .\out\artifacts\Calculator\Calculator.jar
+  on:
+    repo: sandtechnology/Calculator

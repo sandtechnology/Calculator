@@ -63,8 +63,8 @@
 
     <property name="compiler.args.calculator" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
 
-    <property name="calculator.output.dir" value="${module.calculator.basedir}/out/production/Learning"/>
-    <property name="calculator.testoutput.dir" value="${module.calculator.basedir}/out/test/Learning"/>
+    <property name="calculator.output.dir" value="${module.calculator.basedir}/out/production/Calculator"/>
+    <property name="calculator.testoutput.dir" value="${module.calculator.basedir}/out/test/Calculator"/>
 
     <path id="calculator.module.bootclasspath">
         <!-- Paths to be included in compilation bootclasspath -->
@@ -142,25 +142,24 @@
 
     <target name="init.artifacts">
         <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
-        <property name="artifact.output.learning:jar" value="${basedir}/out/artifacts/Learning_jar"/>
+        <property name="artifact.output.calculator" value="${basedir}/out/artifacts/Calculator"/>
         <mkdir dir="${artifacts.temp.dir}"/>
-        <property name="temp.jar.path.Learning.jar" value="${artifacts.temp.dir}/Learning.jar"/>
+        <property name="temp.jar.path.Calculator.jar" value="${artifacts.temp.dir}/Calculator.jar"/>
     </target>
 
-    <target name="artifact.learning:jar" depends="init.artifacts, compile.module.calculator"
-            description="Build &#39;Learning:jar&#39; artifact">
-        <property name="artifact.temp.output.learning:jar" value="${artifacts.temp.dir}/Learning_jar"/>
-        <mkdir dir="${artifact.temp.output.learning:jar}"/>
-        <jar destfile="${temp.jar.path.Learning.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
-            <zipfileset dir="${calculator.output.dir}"/>
+    <target name="artifact.calculator" depends="init.artifacts" description="Build &#39;Calculator&#39; artifact">
+        <property name="artifact.temp.output.calculator" value="${artifacts.temp.dir}/Calculator"/>
+        <mkdir dir="${artifact.temp.output.calculator}"/>
+        <jar destfile="${temp.jar.path.Calculator.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+            <zipfileset file="${basedir}/out/production/Calculator/META-INF/MANIFEST.MF" prefix="META-INF"/>
         </jar>
-        <copy file="${temp.jar.path.Learning.jar}" tofile="${artifact.temp.output.learning:jar}/Learning.jar"/>
+        <copy file="${temp.jar.path.Calculator.jar}" tofile="${artifact.temp.output.calculator}/Calculator.jar"/>
     </target>
 
-    <target name="build.all.artifacts" depends="artifact.learning:jar" description="Build all artifacts">
-        <mkdir dir="${artifact.output.learning:jar}"/>
-        <copy todir="${artifact.output.learning:jar}">
-            <fileset dir="${artifact.temp.output.learning:jar}"/>
+    <target name="build.all.artifacts" depends="artifact.calculator" description="Build all artifacts">
+        <mkdir dir="${artifact.output.calculator}"/>
+        <copy todir="${artifact.output.calculator}">
+            <fileset dir="${artifact.temp.output.calculator}"/>
         </copy>
 
         <!-- Delete temporary files -->
