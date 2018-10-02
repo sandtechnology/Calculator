@@ -2,7 +2,7 @@
   <artifact type="jar" build-on-make="true" name="Learning:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/Learning_jar</output-path>
     <root id="archive" name="Learning.jar">
-      <element id="module-output" name="Learning" />
+      <element id="module-output" name="Calculator" />
     </root>
   </artifact>
 </component>

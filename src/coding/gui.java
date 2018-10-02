@@ -2,13 +2,12 @@ package coding;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
 class gui extends JFrame {
-    private final String[] num = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "关于", "退出"};
+    private final String[] num = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ".", "退出"};
     private final String[] math_num = {"+", "-", "x", "÷", "="};
     private List<String> num_cache = new ArrayList<>();
     private List<String> math_num_cache = new ArrayList<>();
@@ -25,54 +24,78 @@ class gui extends JFrame {
         for (int i = 0; i < num.length; i++) {
             final int a = i;
             JButton button = new JButton(num[a]);
-            button.addActionListener((ActionEvent) -> {
-                switch (num[a]) {
-                    case "关于":
-                        output.setText("作者：sand" + "\n");
-                        break;
-                    case "退出":
-                        System.exit(0);
-                        break;
-                    default:
-                        ready_add_num = ready_add_num + num[a];
-                        output.append(num[a]);
-                        break;
+            //键盘支持
+            //相关资料：http://www.cnblogs.com/KeenLeung/archive/2012/05/27/2520657.html
+            output.addKeyListener(new KeyAdapter() {
+                public void keyTyped(KeyEvent e) {
+                    if (e.getKeyChar() == num[a].toCharArray()[0])
+                        button.doClick();
                 }
             });
+            button.addActionListener((ActionEvent) -> ButtonPerformer(output, "num", a));
             num_panel.add(button);
         }
         for (int i = 0; i < math_num.length; i++) {
             final int a = i;
-            JButton c = new JButton(math_num[a]);
-            c.addActionListener((ActionEvent) -> {
-                if (ready_add_num.length() > 0) {
-                    num_cache.add(ready_add_num);
-                    ready_add_num = "";
-                }
-                output.append("\n" + math_num[a] + "\n");
-                if (math_num[a].equals("=")) {
-                    output.setText(Count() + "\n");
-                } else {
-                    math_num_cache.add(math_num[a]);
+            JButton button = new JButton(math_num[a]);
+            //键盘支持
+            //相关资料：http://www.cnblogs.com/KeenLeung/archive/2012/05/27/2520657.html
+            output.addKeyListener(new KeyAdapter() {
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyChar() == math_num[a].toCharArray()[0])
+                        button.doClick();
+                    else
+                        switch (e.getKeyChar()) {
+                            case '/':
+                                if ("÷".equals(math_num[a]))
+                                    button.doClick();
+                                break;
+                            case '*':
+                                if ("x".equals(math_num[a]))
+                                    button.doClick();
+                                break;
+                            case 'c' | 'C':
+                                if ("清除".equals(math_num[a]))
+                                    button.doClick();
+                                break;
+                            default:
+                                switch (e.getKeyCode()) {
+                                    case KeyEvent.VK_ENTER:
+                                        if ("=".equals(math_num[a]))
+                                            button.doClick();
+                                        break;
+                                    case KeyEvent.VK_ESCAPE:
+                                        if ("退出".equals(math_num[a]))
+                                            button.doClick();
+                                        break;
+                                }
+                                break;
+                        }
                 }
             });
-            math_num_panel.add(c);
+            button.addActionListener((ActionEvent) -> ButtonPerformer(output, "math", a));
+            math_num_panel.add(button);
         }
-        JButton c = new JButton("清除");
-        c.addActionListener((ActionEvent) -> {
-            output.setText("");
-            ready_add_num = "";
-            num_cache.clear();
-            math_num_cache.clear();
-        });
+        JButton button = new JButton("清除");
+        button.addActionListener((ActionEvent) -> ButtonPerformer(output, "clear", 0));
+        output.getAutoscrolls();
         output.setEditable(false);
-        math_num_panel.add(c);
+        math_num_panel.add(button);
         output.setSize(10, 10);
+        output.addFocusListener(new FocusAdapter() {
+                                    public void focusGained(FocusEvent e) {
+                                        setTitle("计算器V2.1 作者：sand（可使用键盘输入）");
+                                    }
+
+                                    public void focusLost(FocusEvent e) {
+                                        setTitle("计算器V2.1 作者：sand（点击文本区域以启用键盘输入）");
+                                    }
+                                }
+        );
         gui.add(output);
         gui.add(math_num_panel);
         gui.add(num_panel);
         setSize(500, 500);
-        setTitle("计算器V2.0");
         setVisible(true);
         addWindowListener(new WindowAdapter() {
             @Override
@@ -84,8 +107,50 @@ class gui extends JFrame {
     }
 
     private float StringConvert(String str) {
-        Float F = new Float(str);
-        return F.intValue();
+        return new Float(str);
+    }
+
+    private void ButtonPerformer(JTextArea addTextArea, String type, int index) {
+        switch (type) {
+            case "math":
+                if (ready_add_num.length() > 0) {
+                    num_cache.add(ready_add_num);
+                    ready_add_num = "";
+                }
+                addTextArea.append("\n" + math_num[index] + "\n");
+                if (math_num[index].equals("=")) {
+                    addTextArea.setText(Count() + "\n");
+                } else {
+                    math_num_cache.add(math_num[index]);
+                }
+                break;
+            case "num":
+                switch (num[index]) {
+                    case "关于":
+                        addTextArea.setText("作者：sand" + "\n");
+                        break;
+                    case "退出":
+                        System.exit(0);
+                        break;
+                    case ".":
+                        if (!ready_add_num.contains(".")) {
+                            ready_add_num = ready_add_num + ".";
+                            addTextArea.append(".");
+                        }
+                        break;
+                    default:
+                        ready_add_num = ready_add_num + num[index];
+                        addTextArea.append(num[index]);
+                        break;
+                }
+                break;
+            case "clear":
+                addTextArea.removeAll();
+                ready_add_num = "";
+                num_cache.clear();
+                math_num_cache.clear();
+                break;
+        }
     }
 
     private String Count() {
@@ -114,7 +179,8 @@ class gui extends JFrame {
                 result = StringConvert(num_cache.get(num_cache.toArray().length - 1));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            if (!e.toString().contains("Index"))
+                e.printStackTrace();
         }
         num_cache.clear();
         math_num_cache.clear();
