@@ -13,7 +13,7 @@ class gui extends JFrame {
     private List<String> math_num_cache = new ArrayList<>();
     private String ready_add_num = "";
     private Float result = (float) 0;
-    private String version = "V2.1";
+    private String version = "V2.2";
     private boolean need_to_clear, has_result = false;
 
     gui() {
