@@ -63,8 +63,7 @@ class gui extends JFrame {
                                             button.doClick();
                                         break;
                                     case KeyEvent.VK_ESCAPE:
-                                        if ("退出（Esc）".equals(math_num[a]))
-                                            button.doClick();
+                                        System.exit(0);
                                         break;
                                 }
                                 break;
@@ -140,7 +139,7 @@ class gui extends JFrame {
                 break;
             case "num":
                 switch (num[index]) {
-                    case "退出":
+                    case "退出（Esc）":
                         System.exit(0);
                         break;
                     case ".":
@@ -163,6 +162,7 @@ class gui extends JFrame {
             case "clear":
                 addTextArea.setText("");
                 need_to_clear = true;
+                has_result = false;
                 ready_add_num = "";
                 num_cache.clear();
                 math_num_cache.clear();
@@ -196,7 +196,7 @@ class gui extends JFrame {
                 result = StringConvert(num_cache.get(num_cache.toArray().length - 1));
             }
         } catch (Exception e) {
-                e.printStackTrace();
+            e.printStackTrace();
         }
         num_cache.clear();
         math_num_cache.clear();
