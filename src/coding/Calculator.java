@@ -1,8 +1,10 @@
 package coding;
 
-class main {
+import coding.gui.Displayer;
+
+class Calculator {
     public static void main(String[] args) {
-        new gui();
+        new Displayer();
     }
 //import static coding.API.*;
 //import static java.lang.System.*;

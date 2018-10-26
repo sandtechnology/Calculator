@@ -1,4 +1,6 @@
-package coding;
+package coding.gui;
+
+import coding.calculate.ArithmeticProcessor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -6,17 +8,16 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
-class gui extends JFrame {
+public class Displayer extends JFrame {
     private final String[] num = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ".", "退出（Esc）"};
     private final String[] math_num = {"+", "-", "x", "÷", "="};
     private List<String> num_cache = new ArrayList<>();
     private List<String> math_num_cache = new ArrayList<>();
     private String ready_add_num = "";
-    private Float result = (float) 0;
     private String version = "V2.2";
     private boolean need_to_clear, has_result = false;
 
-    gui() {
+    public Displayer() {
         Container gui = getContentPane();
         gui.setLayout(new GridLayout(3, 1, 1, 1));
         JPanel num_panel = new JPanel(new GridLayout(4, 2, 1, 1));
@@ -108,11 +109,6 @@ class gui extends JFrame {
             }
         });
     }
-
-    private float StringConvert(String str) {
-        return new Float(str);
-    }
-
     private void ButtonPerformer(JTextArea addTextArea, String type, int index) {
         switch (type) {
             case "math":
@@ -130,7 +126,9 @@ class gui extends JFrame {
                         addTextArea.append("\n" + math_num[index] + "\n");
                     }
                     if (math_num[index].equals("=")) {
-                        addTextArea.setText(Count() + "\n");
+                        ArithmeticProcessor result = new ArithmeticProcessor();
+                        result.Arithmetic(math_num_cache, num_cache);
+                        addTextArea.setText(num_cache.get(0) + "\n");
                         has_result = true;
                     } else {
                         math_num_cache.add(math_num[index]);
@@ -170,38 +168,5 @@ class gui extends JFrame {
         }
     }
 
-    private String Count() {
-        try {
-            if (math_num_cache.toArray().length > 0) {
-                for (int i = 0; i < math_num_cache.toArray().length; i++) {
-                    if (i == 0) {
-                        result = StringConvert(num_cache.get(i));
-                    }
-                    switch (math_num_cache.get(i)) {
-                        case "+":
-                            result = result + StringConvert(num_cache.get(i + 1));
-                            break;
-                        case "-":
-                            result = result - StringConvert(num_cache.get(i + 1));
-                            break;
-                        case "x":
-                            result = result * StringConvert(num_cache.get(i + 1));
-                            break;
-                        case "÷":
-                            result = result / StringConvert(num_cache.get(i + 1));
-                            break;
-                    }
-                }
-            } else {
-                result = StringConvert(num_cache.get(num_cache.toArray().length - 1));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        num_cache.clear();
-        math_num_cache.clear();
-        num_cache.add(0, result.toString());
-        result = (float) 0;
-        return num_cache.get(0).replace("Infinity", "Error:数字过大或无效");
-    }
+
 }
