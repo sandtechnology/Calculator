@@ -1,4 +1,4 @@
 package coding.calculate;
 
-public class BracketsProcessor {
+class BracketsProcessor {
 }
