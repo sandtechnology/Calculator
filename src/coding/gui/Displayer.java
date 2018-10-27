@@ -16,7 +16,7 @@ public class Displayer {
     private final String[] math_num = {"+", "-", "x", "÷", "="};
     private final String[] key = {"name", "by", "author", "tips1", "tips2", "exit", "clear"};
     private final HashMap<String, String> langCache = new HashMap<>();
-    private final String version = "V2.2";
+    private final String version = "v2.4-HotFix#01";
 
 
     public Displayer() {
@@ -45,6 +45,8 @@ public class Displayer {
         }
         //设置文本区域
         output.setEditable(false);
+        //设置初始值
+        output.setText("0.0");
         output.addFocusListener(new FocusAdapter() {
                                     public void focusGained(FocusEvent e) {
                                         frame.setTitle(langCache.get("name") + version + langCache.get("by") + langCache.get("author") + langCache.get("tips1"));
@@ -59,11 +61,17 @@ public class Displayer {
         //数字
         for (String num : num) {
             JButton a = new JButton(num);
+            //设置无边框
+            a.setBorderPainted(false);
+            a.setFocusPainted(false);
             num_panel.add(a);
         }
         //运算符号
         for (String num : math_num) {
             JButton a = new JButton(num);
+            //设置无边框
+            a.setBorderPainted(false);
+            a.setFocusPainted(false);
             math_num_panel.add(a);
         }
         //其他

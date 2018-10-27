@@ -16,7 +16,9 @@ class ButtonListenerAdder {
     private final List<String> num_cache = new ArrayList<>();
     private final List<String> math_num_cache = new ArrayList<>();
     private String ready_add_num = "";
-    private boolean isCleared, haveResult = false;
+    //初始化设置
+    private boolean isCleared = true;
+    private boolean haveResult = false;
 
 
     //状态选择器大法好
