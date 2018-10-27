@@ -21,16 +21,21 @@ public class Displayer {
 
     public Displayer() {
         JFrame frame = new JFrame();
-        JPanel math_num_panel = new JPanel(new GridLayout(3, 3, 1, 1));
-        JPanel num_panel = new JPanel(new GridLayout(3, 3, 1, 1));
+        JPanel math_num_panel = new JPanel(new GridLayout(0, 2, 0, 0));
+        JPanel num_panel = new JPanel(new GridLayout(0, 3, 0, 0));
         JTextArea output = new JTextArea();
+        //将文本区添加到滚动面板中
+        JScrollPane scrollPane = new JScrollPane(output);
+        //设置无边框
+        //参考资料：https://bbs.csdn.net/topics/340235281
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
         Container container = frame.getContentPane();
-        container.setLayout(new GridLayout(3, 1, 1, 1));
-        init(frame, container, num_panel, math_num_panel, output);
+        container.setLayout(new GridLayout(3, 0, 0, 0));
+        init(frame, container, scrollPane, num_panel, math_num_panel, output);
     }
 
 
-    private void init(JFrame frame, Container gui, JPanel num_panel, JPanel math_num_panel, JTextArea output) {
+    private void init(JFrame frame, Container gui, JScrollPane scrollPane, JPanel num_panel, JPanel math_num_panel, JTextArea output) {
         //获取词条
         Locale locale = Locale.getDefault();
         String language = locale.getLanguage();
@@ -39,7 +44,6 @@ public class Displayer {
             langCache.put(value, keyFinder.getLanguageKey(language, value));
         }
         //设置文本区域
-        output.getAutoscrolls();
         output.setEditable(false);
         output.addFocusListener(new FocusAdapter() {
                                     public void focusGained(FocusEvent e) {
@@ -65,9 +69,13 @@ public class Displayer {
         //其他
         //退出按钮
         JButton exit = new JButton(langCache.get("exit"));
+        exit.setBorderPainted(false);
+        exit.setFocusPainted(false);
         num_panel.add(exit);
         //清除按钮
         JButton clear = new JButton(langCache.get("clear"));
+        clear.setBorderPainted(false);
+        clear.setFocusPainted(false);
         math_num_panel.add(clear);
         //添加事件
         ButtonListenerAdder adder = new ButtonListenerAdder();
@@ -76,10 +84,11 @@ public class Displayer {
         adder.addOtherButtonListener(language, num_panel, output);
         adder.addOtherButtonListener(language, math_num_panel, output);
         //添加三连
-        gui.add(output);
+        gui.add(scrollPane);
         gui.add(math_num_panel);
         gui.add(num_panel);
         //设置大小
+        frame.setSize(500, 500);
         //设置可见性
         frame.setVisible(true);
         //设置窗口事件
