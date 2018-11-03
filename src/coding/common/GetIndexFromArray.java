@@ -12,10 +12,12 @@ public class GetIndexFromArray {
     public void lookIndexAndAmount(List<String> array, String goal) {
         amount = 0;
         index.clear();
-        for (int x = 0; array.size() > x; x++) {
-            if (array.get(x).equals(goal)) {
-                index.add(x);
-                amount++;
+        if (array.size() != 0) {
+            for (int x = 0; array.size() > x; x++) {
+                if (array.get(x).equals(goal)) {
+                    index.add(x);
+                    amount++;
+                }
             }
         }
     }

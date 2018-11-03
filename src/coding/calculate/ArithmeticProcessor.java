@@ -15,30 +15,29 @@ public class ArithmeticProcessor {
             GetIndexFromArray finder = new GetIndexFromArray();
             finder.lookIndexAndAmount(math_num_cache, x);
             if (finder.getAmount() != 0) {
-                for (int index = 0; finder.getIndexSize() > index; index++) {
-                    //因为删除了数字，而删除的个数刚刚好与index相同，所以此处得到的元素位置直接删去了index
-                    int num_index = finder.getIndex(index) - index;
-                    double value1 = Double.valueOf(num_cache.get(num_index));
-                    double value2 = Double.valueOf(num_cache.get(num_index + 1));
-                    num_cache.remove(num_cache.get(num_index + 1));
+                for (int i = 0; finder.getIndexSize() > i; i++) {
+                    //因为删除了数字，而删除的个数刚刚好与i相同，所以此处得到的元素位置直接删去了i
+                    int index = finder.getIndex(i) - i;
+                    double value1 = Double.valueOf(num_cache.get(index));
+                    double value2 = Double.valueOf(num_cache.get(index + 1));
+                    math_num_cache.remove(index);
+                    num_cache.remove(num_cache.get(index + 1));
                     switch (x) {
                         case "x":
-                            num_cache.set(num_index, Double.toString(value1 * value2));
+                            num_cache.set(index, Double.toString(value1 * value2));
                             break;
                         case "÷":
-                            num_cache.set(num_index, Double.toString(value1 / value2));
+                            num_cache.set(index, Double.toString(value1 / value2));
                             break;
                         case "+":
-                            num_cache.set(num_index, Double.toString(value1 + value2));
+                            num_cache.set(index, Double.toString(value1 + value2));
                             break;
                         case "-":
-                            num_cache.set(num_index, Double.toString(value1 - value2));
+                            num_cache.set(index, Double.toString(value1 - value2));
                             break;
                     }
                 }
             }
         }
-        //清除运算符号
-        math_num_cache.clear();
     }
 }

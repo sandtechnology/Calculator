@@ -12,11 +12,11 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class Displayer {
-    private final String[] num = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "."};
-    private final String[] math_num = {"+", "-", "x", "÷", "="};
+    private final String[] number = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "."};
+    private final String[] operators = {"+", "-", "x", "÷", "="};
     private final String[] key = {"name", "by", "author", "tips1", "tips2", "exit", "clear"};
     private final HashMap<String, String> langCache = new HashMap<>();
-    private final String version = "v2.4-HotFix#01";
+    private final String version = "V2.5";
 
 
     public Displayer() {
@@ -45,6 +45,7 @@ public class Displayer {
         }
         //设置文本区域
         output.setEditable(false);
+        output.setFont(new Font("微软雅黑", Font.PLAIN, 15));
         //设置初始值
         output.setText("0.0");
         output.addFocusListener(new FocusAdapter() {
@@ -59,19 +60,21 @@ public class Displayer {
         );
         //添加按钮
         //数字
-        for (String num : num) {
+        for (String num : number) {
             JButton a = new JButton(num);
             //设置无边框
             a.setBorderPainted(false);
             a.setFocusPainted(false);
+            a.setFont(new Font("微软雅黑", Font.BOLD, 15));
             num_panel.add(a);
         }
         //运算符号
-        for (String num : math_num) {
+        for (String num : operators) {
             JButton a = new JButton(num);
             //设置无边框
             a.setBorderPainted(false);
             a.setFocusPainted(false);
+            a.setFont(new Font("微软雅黑", Font.BOLD, 15));
             math_num_panel.add(a);
         }
         //其他
@@ -79,11 +82,13 @@ public class Displayer {
         JButton exit = new JButton(langCache.get("exit"));
         exit.setBorderPainted(false);
         exit.setFocusPainted(false);
+        exit.setFont(new Font("微软雅黑", Font.BOLD, 15));
         num_panel.add(exit);
         //清除按钮
         JButton clear = new JButton(langCache.get("clear"));
         clear.setBorderPainted(false);
         clear.setFocusPainted(false);
+        clear.setFont(new Font("微软雅黑", Font.BOLD, 15));
         math_num_panel.add(clear);
         //添加事件
         ButtonListenerAdder adder = new ButtonListenerAdder();
