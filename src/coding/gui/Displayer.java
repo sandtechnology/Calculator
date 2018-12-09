@@ -12,30 +12,30 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class Displayer {
-    private final String[] number = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "."};
-    private final String[] operators = {"+", "-", "x", "÷", "="};
+    static final HashMap<String, String> langCache = new HashMap<>();
+    private static final JFrame frame = new JFrame();
     private final String[] key = {"name", "by", "author", "tips1", "tips2", "exit", "clear"};
-    private final HashMap<String, String> langCache = new HashMap<>();
-    private final String version = "V2.5";
-
+    private static final JPanel mathNumPanel = new JPanel(new GridLayout(0, 2, 0, 0));
+    private static final JPanel numPanel = new JPanel(new GridLayout(0, 3, 0, 0));
+    private final String[] operators = {"+", "-", "x", "÷"};
+    private final String[] specialOperators = {".", "=", "c"};
+    private final String version = "V2.6";
+    private final JTextArea output = ButtonActions.output;
+    private final Container gui = frame.getContentPane();
+    private final JScrollPane scrollPane = new JScrollPane(output);
 
     public Displayer() {
-        JFrame frame = new JFrame();
-        JPanel math_num_panel = new JPanel(new GridLayout(0, 2, 0, 0));
-        JPanel num_panel = new JPanel(new GridLayout(0, 3, 0, 0));
-        JTextArea output = new JTextArea();
         //将文本区添加到滚动面板中
-        JScrollPane scrollPane = new JScrollPane(output);
         //设置无边框
         //参考资料：https://bbs.csdn.net/topics/340235281
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        Container container = frame.getContentPane();
-        container.setLayout(new GridLayout(3, 0, 0, 0));
-        init(frame, container, scrollPane, num_panel, math_num_panel, output);
+        gui.setLayout(new GridLayout(3, 0, 0, 0));
+        init();
     }
 
 
-    private void init(JFrame frame, Container gui, JScrollPane scrollPane, JPanel num_panel, JPanel math_num_panel, JTextArea output) {
+    private void init() {
+        ButtonActions action = new ButtonActions();
         //获取词条
         Locale locale = Locale.getDefault();
         String language = locale.getLanguage();
@@ -44,6 +44,7 @@ public class Displayer {
             langCache.put(value, keyFinder.getLanguageKey(language, value));
         }
         //设置文本区域
+        output.addKeyListener(action.new OutputAction());
         output.setEditable(false);
         output.setFont(new Font("微软雅黑", Font.PLAIN, 15));
         //设置初始值
@@ -60,13 +61,15 @@ public class Displayer {
         );
         //添加按钮
         //数字
-        for (String num : number) {
+        for (int i = 0; i < 10; i++) {
+            String num = String.valueOf(i);
             JButton a = new JButton(num);
             //设置无边框
             a.setBorderPainted(false);
             a.setFocusPainted(false);
             a.setFont(new Font("微软雅黑", Font.BOLD, 15));
-            num_panel.add(a);
+            a.addActionListener(action.new NumberAction(num));
+            numPanel.add(a);
         }
         //运算符号
         for (String num : operators) {
@@ -75,31 +78,46 @@ public class Displayer {
             a.setBorderPainted(false);
             a.setFocusPainted(false);
             a.setFont(new Font("微软雅黑", Font.BOLD, 15));
-            math_num_panel.add(a);
+            a.addActionListener(action.new OperatorsAction(num));
+            mathNumPanel.add(a);
+        }
+        for (String num : specialOperators) {
+            JButton a = new JButton(num);
+            a.setBorderPainted(false);
+            a.setFocusPainted(false);
+            a.setFont(new Font("微软雅黑", Font.BOLD, 15));
+            switch (num) {
+                case ".":
+                    a.addActionListener(action.new UniqueAction(num));
+                    numPanel.add(a);
+                    break;
+                case "=":
+                    a.addActionListener(action.new EqualAction());
+                    mathNumPanel.add(a);
+                    break;
+            }
         }
         //其他
         //退出按钮
         JButton exit = new JButton(langCache.get("exit"));
         exit.setBorderPainted(false);
         exit.setFocusPainted(false);
+        exit.addActionListener((event) -> System.exit(0));
         exit.setFont(new Font("微软雅黑", Font.BOLD, 15));
-        num_panel.add(exit);
+        numPanel.add(exit);
         //清除按钮
         JButton clear = new JButton(langCache.get("clear"));
         clear.setBorderPainted(false);
         clear.setFocusPainted(false);
+        clear.addActionListener(action.new ClearAction());
         clear.setFont(new Font("微软雅黑", Font.BOLD, 15));
-        math_num_panel.add(clear);
-        //添加事件
-        ButtonListenerAdder adder = new ButtonListenerAdder();
-        adder.addCommonButtonListener(language, num_panel, "number", output);
-        adder.addCommonButtonListener(language, math_num_panel, "math", output);
-        adder.addOtherButtonListener(language, num_panel, output);
-        adder.addOtherButtonListener(language, math_num_panel, output);
+        mathNumPanel.add(clear);
+        //添加按钮列表
+        action.init(mathNumPanel, numPanel);
         //添加三连
         gui.add(scrollPane);
-        gui.add(math_num_panel);
-        gui.add(num_panel);
+        gui.add(mathNumPanel);
+        gui.add(numPanel);
         //设置大小
         frame.setSize(500, 500);
         //设置可见性
