@@ -5,8 +5,8 @@ import coding.calculate.ArithmeticProcessor;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,10 +17,10 @@ class ButtonActions {
     private static final List<String> operatorsCache = new ArrayList<>();
     private static final StringBuilder numberCache = new StringBuilder();
     //初始化设置
-    private boolean isCleared = true;
-    private boolean haveResult = false;
+    private Status status;
 
     void init(JPanel... jps) {
+        status = Status.START;
         for (JPanel jp : jps) {
             for (int i = 0; jp.getComponentCount() - 1 >= i; i++) {
                 if (jp.getComponent(i) instanceof JButton) {
@@ -30,13 +30,9 @@ class ButtonActions {
         }
     }
 
-    class OutputAction implements KeyListener {
-        public void keyTyped(KeyEvent e) {
-        }
+    enum Status {START, TYPE_NUM, TYPE_OPE}
 
-        public void keyReleased(KeyEvent e) {
-        }
-
+    class OutputAction extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
             String text = String.valueOf(e.getKeyChar()).replace("/", "÷").toLowerCase();
@@ -69,11 +65,10 @@ class ButtonActions {
         @Override
         public void actionPerformed(ActionEvent e) {
             numberCache.setLength(0);
-            System.out.println(numberCache.toString());
             numbersCache.clear();
             operatorsCache.clear();
-            output.setText("");
-            isCleared = true;
+            output.setText("0.0");
+            status = Status.START;
         }
     }
 
@@ -85,7 +80,7 @@ class ButtonActions {
                 numberCache.setLength(0);
                 ArithmeticProcessor.Arithmetic(operatorsCache, numbersCache);
                 output.setText(numbersCache.get(0));
-                haveResult = true;
+                status = Status.START;
             }
         }
     }
@@ -99,12 +94,12 @@ class ButtonActions {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (haveResult | !numberCache.toString().equals("")) {
+            if (status == Status.TYPE_NUM) {
                 numbersCache.add(numberCache.toString());
                 numberCache.setLength(0);
                 operatorsCache.add(name);
                 output.append("\n" + name + "\n");
-                haveResult = false;
+                status = Status.TYPE_OPE;
             }
         }
     }
@@ -120,7 +115,7 @@ class ButtonActions {
         public void actionPerformed(ActionEvent e) {
             //第一个条件防止直接输入“.”
             //第二个条件防止输入多个“.”
-            if (!numberCache.toString().equals("") && !numberCache.toString().contains(name)) {
+            if (status == Status.TYPE_NUM && !numberCache.toString().contains(name)) {
                 output.append(name);
                 numberCache.append(name);
             }
@@ -138,15 +133,14 @@ class ButtonActions {
         public void actionPerformed(ActionEvent e) {
             //有结果时输入清除结果
             //被清除时覆盖数字
-            if (haveResult | isCleared) {
+            if (status == Status.START) {
                 numbersCache.clear();
                 output.setText(name);
-                haveResult = false;
-                isCleared = false;
             }
             else {
                 output.append(name);
             }
+            status = Status.TYPE_NUM;
             numberCache.append(name);
         }
     }

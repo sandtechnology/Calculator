@@ -19,7 +19,7 @@ public class Displayer {
     private static final JPanel numPanel = new JPanel(new GridLayout(0, 3, 0, 0));
     private final String[] operators = {"+", "-", "x", "÷"};
     private final String[] specialOperators = {".", "=", "c"};
-    private final String version = "V2.6";
+    private final String version = "V2.7";
     private final JTextArea output = ButtonActions.output;
     private final Container gui = frame.getContentPane();
     private final JScrollPane scrollPane = new JScrollPane(output);
